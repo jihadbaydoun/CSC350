@@ -1,29 +1,54 @@
 ﻿using System;
-using System.Collections.Generic;
+
+public enum Suit
+{
+    Clubs,
+    Diamonds,
+    Hearts,
+    Spades
+}
+
+public enum Rank
+{
+    Ace = 1,
+    Two,
+    Three,
+    Four,
+    Five,
+    Six,
+    Seven,
+    Eight,
+    Nine,
+    Ten,
+    Jack,
+    Queen,
+    King
+}
 
 public class Card
 {
-    private int value;
-    private string suit;
+    private Rank rank;
+    private Suit suit;
 
-    public static string[] Suits = {"Clubs", "Diamonds", "Hearts", "Spades"};
-    public static int[] Values = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
-
-    public Card (string suit, int value)
+    public Card(Suit suit, Rank rank)
     {
         this.suit = suit;
-        this.value = value;
+        this.rank = rank;
     }
 
-    public int getValue()
+    public Rank GetRank()
     {
-        return value;
+        return rank;
     }
 
+    public Suit GetSuit()
+    {
+        return suit;
+    }
+
+    // 🔥 FIXED HERE
     public override string ToString()
     {
-        return $"{suit} of {value}";
+        return $"{(int)rank} of {suit}";
     }
-
-
 }
