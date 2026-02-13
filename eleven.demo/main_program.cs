@@ -6,6 +6,8 @@ class Program
     {
         GameController game = new GameController();
 
+        game.StartGame();   // important now
+
         while (true)
         {
             var cards = game.GetTableCards();
@@ -16,11 +18,20 @@ class Program
                 Console.WriteLine($"{i}: {cards[i]}");
             }
 
+            if (game.CheckEndState())
+            {
+                game.EndGame();
+                break;
+            }
+
             Console.WriteLine("\nEnter two indexes separated by space (or 'q' to quit):");
             string input = Console.ReadLine();
 
             if (input.ToLower() == "q")
+            {
+                game.EndGame();
                 break;
+            }
 
             string[] parts = input.Split(' ');
 
@@ -33,12 +44,7 @@ class Program
             if (int.TryParse(parts[0], out int i1) &&
                 int.TryParse(parts[1], out int i2))
             {
-                bool success = game.TryPlay(i1, i2);
-
-                if (success)
-                    Console.WriteLine("Valid move! Cards removed.");
-                else
-                    Console.WriteLine("Invalid move.");
+                game.PlayTurn(i1, i2);
             }
             else
             {

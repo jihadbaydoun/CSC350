@@ -5,14 +5,20 @@ public class GameController
 {
     private Deck deck;
     private Table table;
+    private bool gameRunning;
 
     public GameController()
     {
         deck = new Deck();
         table = new Table();
+        gameRunning = false;
+    }
 
+    public void StartGame()
+    {
         deck.Shuffle();
         DealInitialCards();
+        gameRunning = true;
     }
 
     private void DealInitialCards()
@@ -26,13 +32,28 @@ public class GameController
         }
     }
 
-    public IReadOnlyList<Card> GetTableCards()
+    public bool SubmitSelection(int index1, int index2)
     {
-        return table.GetCards();
+        if (!ValidateSelection(index1, index2))
+            return false;
+
+        var cards = table.GetCards();
+
+        Card card1 = cards[index1];
+        Card card2 = cards[index2];
+
+        table.RemoveCards(new List<Card> { card1, card2 });
+
+        if (!deck.IsEmpty())
+            table.AddCard(deck.Deal());
+
+        if (!deck.IsEmpty())
+            table.AddCard(deck.Deal());
+
+        return true;
     }
 
-    // 🔥 NEW METHOD ADDED HERE
-    public bool TryPlay(int index1, int index2)
+    public bool ValidateSelection(int index1, int index2)
     {
         var cards = table.GetCards();
 
@@ -43,25 +64,30 @@ public class GameController
             return false;
         }
 
-        Card card1 = cards[index1];
-        Card card2 = cards[index2];
+        int value1 = (int)cards[index1].GetRank();
+        int value2 = (int)cards[index2].GetRank();
 
-        int value1 = (int)card1.GetRank();
-        int value2 = (int)card2.GetRank();
+        return value1 + value2 == 11;
+    }
 
-        if (value1 + value2 == 11)
-        {
-            table.RemoveCards(new List<Card> { card1, card2 });
+    public void PlayTurn(int index1, int index2)
+    {
+        SubmitSelection(index1, index2);
+    }
 
-            if (!deck.IsEmpty())
-                table.AddCard(deck.Deal());
+    public bool CheckEndState()
+    {
+        return deck.IsEmpty();
+    }
 
-            if (!deck.IsEmpty())
-                table.AddCard(deck.Deal());
+    public void EndGame()
+    {
+        gameRunning = false;
+        Console.WriteLine("Game Over.");
+    }
 
-            return true;
-        }
-
-        return false;
+    public IReadOnlyList<Card> GetTableCards()
+    {
+        return table.GetCards();
     }
 }
